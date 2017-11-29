@@ -1,26 +1,27 @@
 {
-  "name": "electron-quick-start",
+  "name": "blive-cookie",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "一个Bilibili Cookie获取工具",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "repository": "https://github.com/smilecc/blive-cookie",
+  "author": "Can",
   "devDependencies": {
-    "electron": "~1.7.8"
+    "electron": "~1.7.8",
+    "electron-builder": "^19.46.9"
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
     "jquery": "^3.2.1"
+  },
+  "build": {
+    "appId": "blive-cookie",
+    "win": {
+      "icon": "favicon.ico"
+    }
   }
 }
