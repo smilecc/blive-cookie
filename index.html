@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Bilibili Cookie 获取工具</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <h3 class="title">Bilibili Cookie 获取工具 <small>更为方便的获取B站的Cookie</small></h3>
+      <div class="col-md-6">
+        <webview src="http://live.bilibili.com/p/eden/rank#/childnav/vitality/0" style="width:380px; height:370px" preload="./live.js"></webview>
+        <div class="btn-group">
+          <button class="btn btn-default" type="button" id="btnWebviewReload"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 重新加载页面</button>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <textarea id="iptCookie" class="form-control" rows="10" placeholder="在您登录后这里将显示您的Cookie"></textarea>
+        <div class="alert alert-info" role="alert">
+          <h3>注意事项</h3>
+          <p>1. 左侧页面加载可能需要一定时间，请耐心等待登录界面出现。</p>
+          <p>2. 本工具不会尝试获取和保存您的密码，请放心使用。</p>
+          <p>3. 现已开源，<a href="#" id="linkGithub">Github</a>。</p>
+        </div>
+      </div>
+    </div>
+
+    <script src="jquery.min.js"></script>
+    <script>if (typeof module === 'object') {window.jQuery = window.$ = module.exports;};</script>
+    <script>
+      // You can also require other files to run in this process
+      require('bootstrap')
+      const shell = require('electron').shell
+
+      // 控制外部链接打开
+      document.getElementById('linkGithub').addEventListener('click', function (event) {
+        shell.openExternal('https://github.com/smilecc/blive-cookie')
+      })
+      
+      window.onload = function () {
+        const webview = document.querySelector('webview');
+
+        // 当页面加载的时候获取Cookie
+        webview.addEventListener('dom-ready', () => {
+          // webview.openDevTools()
+          let session = webview.getWebContents().session;
+          session.cookies.get({ url : 'http://live.bilibili.com' }, function(error, cookies) {
+            let cookieStr = ''
+            for (var i = 0; i < cookies.length; i++) {
+              let info = cookies[i];
+              cookieStr += `${info.name}=${info.value};`;
+            }
+            console.log(cookieStr);
+            if (cookieStr.indexOf('DedeUserID=') === -1) {
+              // 未登录
+            } else {
+              // 已经登录
+              $('#iptCookie').val(cookieStr)
+              session.clearStorageData({
+                'storages': ['cookies']
+              });
+              webview.reload();
+            }
+          });
+        });
+
+        $('#btnWebviewReload').click(() => {
+          webview.reload();
+        });
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  .title {
+    margin: 30px 0;
+  }
+  body, h1, h2, h3, small {
+    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  }
+  .btn-group {
+    margin-top: 10px;
+  }
+  .alert {
+    margin-top: 15px;
+  }
+  .alert > h3 {
+    margin-top: 5px;
+  }
+</style>
